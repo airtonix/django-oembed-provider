@@ -5,6 +5,7 @@ from oembed.models import StoredProvider, StoredOEmbed
 class StoredProviderAdmin(admin.ModelAdmin):
     list_display = ('wildcard_regex', 'endpoint_url', 'active', 'provides')
     list_filter = ('active', 'provides')
+    search_fields = ('regex',)
 
     actions = ['activate', 'deactivate']
 
