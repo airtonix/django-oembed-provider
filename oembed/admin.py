@@ -24,6 +24,7 @@ class StoredProviderAdmin(admin.ModelAdmin):
 
 class StoredOEmbedAdmin(admin.ModelAdmin):
     list_display = ('match', 'date_added')
+    search_fields = ('match',)
 
 
 admin.site.register(StoredProvider, StoredProviderAdmin)
