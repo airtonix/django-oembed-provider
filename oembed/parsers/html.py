@@ -35,7 +35,7 @@ class HTMLParser(BaseParser):
                     context,
                     urlize_all_links
                 )
-                user_url.replaceWith(replacement)
+                user_url.replaceWith(BeautifulSoup(replacement))
         
         return unicode(soup)
     
