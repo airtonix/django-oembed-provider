@@ -754,5 +754,17 @@
       "endpoint_url": "http://api.smugmug.com/services/oembed/",
       "resource_type": "photo"
     }
+  },
+  {
+    "pk": 64,
+    "model": "oembed.storedprovider",
+    "fields": {
+      "regex": "http://youtu.be/\\S*",
+      "wildcard_regex": "http://youtu.be/*",
+      "provides": false,
+      "active": true,
+      "endpoint_url": "http://www.youtube.com/oembed",
+      "resource_type": "video"
+    }
   }
 ]
