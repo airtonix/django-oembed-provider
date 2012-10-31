@@ -5,6 +5,7 @@ from oembed.models import StoredProvider, StoredOEmbed
 class StoredProviderAdmin(admin.ModelAdmin):
     list_display = ('wildcard_regex', 'endpoint_url', 'active', 'provides')
     list_filter = ('active', 'provides')
+    search_fields = ('regex',)
 
     actions = ['activate', 'deactivate']
 
@@ -23,6 +24,7 @@ class StoredProviderAdmin(admin.ModelAdmin):
 
 class StoredOEmbedAdmin(admin.ModelAdmin):
     list_display = ('match', 'date_added')
+    search_fields = ('match',)
 
 
 admin.site.register(StoredProvider, StoredProviderAdmin)
