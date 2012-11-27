@@ -284,8 +284,17 @@ class DjangoProvider(BaseProvider):
         >>> regex.pattern
         'http://(www2.kusports.com|www2.ljworld.com|www.lawrence.com)/photos/(?P<year>\\d{4})/(?P<month>\\w{3})/(?P<day>\\d{1,2})/(?P<object_id>\\d+)/$'
         """
+        # get namespace's regex if namespaces are used
+        if ':' in self._meta.named_view:
+            namespace, view = self._meta.named_view.partition(':')[::2]
+            namespace = resolver.namespace_dict.get(namespace)
+            reverse_dict = namespace[1].reverse_dict
+        else:
+            view = self._meta.named_view
+            reverse_dict = resolver.reverse_dict
+
         # get the regexes from the urlconf
-        url_patterns = resolver.reverse_dict.get(self._meta.named_view)
+        url_patterns = reverse_dict.get(view)
         
         try:
             regex = url_patterns[1]
