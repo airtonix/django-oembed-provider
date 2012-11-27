@@ -284,22 +284,22 @@ class DjangoProvider(BaseProvider):
         >>> regex.pattern
         'http://(www2.kusports.com|www2.ljworld.com|www.lawrence.com)/photos/(?P<year>\\d{4})/(?P<month>\\w{3})/(?P<day>\\d{1,2})/(?P<object_id>\\d+)/$'
         """
-        # get namespace's regex if namespaces are used
-        if ':' in self._meta.named_view:
-            namespace, view = self._meta.named_view.partition(':')[::2]
-            namespace = resolver.namespace_dict.get(namespace)
-            reverse_dict = namespace[1].reverse_dict
-        else:
-            view = self._meta.named_view
-            reverse_dict = resolver.reverse_dict
+        named_view = self._meta.named_view.split(':')
+        view = named_view[-1]
 
-        # get the regexes from the urlconf
-        url_patterns = reverse_dict.get(view)
-        
+        regex = []
+        resolver = get_resolver(None)
+        for namespace in named_view[:-1]:
+            pattern, namespace = resolver.namespace_dict.get(namespace)
+            regex.append(pattern)
+            resolver = namespace
         try:
-            regex = url_patterns[1]
+            pattern = resolver.reverse_dict.get(view)[1]
         except TypeError:
             raise OEmbedException('Error looking up %s' % self._meta.named_view)
+        regex.append(pattern)
+        regex = ''.join(regex)
+
         
         # get a list of normalized domains
         cleaned_sites = self.get_cleaned_sites()
