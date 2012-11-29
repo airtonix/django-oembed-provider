@@ -117,13 +117,12 @@ def oembed_schema(request):
         
         match = None
         if isinstance(provider, DjangoProvider):
-            # django providers define their regex_list by using urlreversing
-            url_pattern = resolver.reverse_dict.get(provider._meta.named_view)
+            path_regex = provider._path_regex()
 
             # this regex replacement is set to be non-greedy, which results
             # in things like /news/*/*/*/*/ -- this is more explicit
-            if url_pattern:
-                regex = re.sub(r'%\(.+?\)s', '*', url_pattern[0][0][0])
+            if path_regex:
+                regex = re.sub(r'%\(.+?\)s', '*', path_regex)
                 match = 'http://%s/%s' % (current_domain, regex)
         elif isinstance(provider, HTTPProvider):
             match = provider.url_scheme

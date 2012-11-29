@@ -273,6 +273,24 @@ class DjangoProvider(BaseProvider):
         if self.resource_type not in ('photo', 'video', 'rich', 'link'):
             raise ValueError('resource_type must be one of "photo", "video", "rich" or "link"')
     
+    def _path_regex(self):
+        named_view = self._meta.named_view.split(':')
+        view = named_view[-1]
+
+        regex = []
+        resolver = get_resolver(None)
+        for namespace in named_view[:-1]:
+            pattern, namespace = resolver.namespace_dict.get(namespace)
+            regex.append(pattern)
+            resolver = namespace
+        try:
+            pattern = resolver.reverse_dict.get(view)[1]
+        except TypeError:
+            raise OEmbedException('Error looking up %s' % self._meta.named_view)
+        regex.append(pattern)
+        regex = ''.join(regex)
+        return regex
+
     def _build_regex(self):
         """
         Performs a reverse lookup on a named view and generates
@@ -284,13 +302,7 @@ class DjangoProvider(BaseProvider):
         >>> regex.pattern
         'http://(www2.kusports.com|www2.ljworld.com|www.lawrence.com)/photos/(?P<year>\\d{4})/(?P<month>\\w{3})/(?P<day>\\d{1,2})/(?P<object_id>\\d+)/$'
         """
-        # get the regexes from the urlconf
-        url_patterns = resolver.reverse_dict.get(self._meta.named_view)
-        
-        try:
-            regex = url_patterns[1]
-        except TypeError:
-            raise OEmbedException('Error looking up %s' % self._meta.named_view)
+        regex = self._path_regex()
         
         # get a list of normalized domains
         cleaned_sites = self.get_cleaned_sites()
