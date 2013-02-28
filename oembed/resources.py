@@ -40,5 +40,5 @@ class OEmbedResource(object):
 
     @classmethod
     def create_json(cls, raw):
-        data = simplejson.loads(raw)
+        data = json.loads(raw)
         return cls.create(data)

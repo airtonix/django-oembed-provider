@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.utils import simplejson
+import json
 
 import oembed
 from oembed.models import StoredOEmbed, StoredProvider
@@ -19,7 +19,7 @@ class OEmbedViewTestCase(BaseOEmbedTestCase):
     def test_basic_handling(self):
         response = self.client.get('/oembed/json/?url=%s' % self.category_url)
         self.assertEqual(response.status_code, 200)
-        response_json = simplejson.loads(response.content)
+        response_json = json.loads(response.content)
         
         stored_oembed = StoredOEmbed.objects.get(match=self.category_url)
         self.assertEqual(response_json, stored_oembed.response)
@@ -40,13 +40,13 @@ class OEmbedViewTestCase(BaseOEmbedTestCase):
         self.assertEqual(response.status_code, 200)
         
         stored = StoredOEmbed.objects.get(match=self.youtube_url)
-        self.assertEqual(simplejson.loads(response.content), stored.response)
+        self.assertEqual(json.loads(response.content), stored.response)
     
     def test_oembed_schema(self):
         response = self.client.get('/oembed/')
         self.assertEqual(response.status_code, 200)
         
-        json_data = simplejson.loads(response.content)
+        json_data = json.loads(response.content)
         self.assertEqual(json_data, [
             {
                 "matches": "http://example.com/testapp/blog/*/*/*/*/",
@@ -78,5 +78,5 @@ class OEmbedViewTestCase(BaseOEmbedTestCase):
         response = self.client.get('/oembed/')
         self.assertEqual(response.status_code, 200)
         
-        json_data = simplejson.loads(response.content)
+        json_data = json.loads(response.content)
         self.assertTrue(expected in json_data)

@@ -14,7 +14,6 @@ from django.core.files import storage
 from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.test import TestCase
-from django.utils import simplejson
 
 import oembed
 from oembed.providers import BaseProvider

@@ -1,4 +1,4 @@
-from django.utils import simplejson
+import json
 
 import oembed
 from oembed.exceptions import AlreadyRegistered, NotRegistered, OEmbedMissingEndpoint
@@ -50,7 +50,7 @@ class ProviderSiteTestCase(BaseOEmbedTestCase):
     
     def test_autodiscovery(self):
         resp = self.client.get('/oembed/')
-        json = simplejson.loads(resp.content)
+        json = json.loads(resp.content)
         
         providers = oembed.site.store_providers(json)
         self.assertEqual(len(providers), 3)
