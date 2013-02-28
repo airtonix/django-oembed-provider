@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.utils import simplejson
+import json
 
 from oembed.constants import RESOURCE_CHOICES
 from oembed.providers import HTTPProvider
@@ -42,7 +42,7 @@ class StoredOEmbed(models.Model):
     
     @property
     def response(self):
-        return simplejson.loads(self.response_json)
+        return json.loads(self.response_json)
 
 
 class StoredProviderManager(models.Manager):

@@ -1,4 +1,4 @@
-from django.utils import simplejson
+import json
 
 from oembed.exceptions import OEmbedException
 
@@ -21,7 +21,7 @@ class OEmbedResource(object):
     
     @property
     def json(self):
-        return simplejson.dumps(self._data)
+        return json.dumps(self._data)
     
     @classmethod
     def create(cls, data):

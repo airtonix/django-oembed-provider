@@ -21,7 +21,7 @@ from django.db.models.fields import DateTimeField, DateField
 from django.db.models.fields.files import ImageField, ImageFieldFile
 from django.template import RequestContext, Context
 from django.template.loader import render_to_string, get_template
-from django.utils import simplejson
+import json
 
 from oembed.constants import OEMBED_ALLOWED_SIZES, OEMBED_THUMBNAIL_SIZE
 from oembed.exceptions import OEmbedException, OEmbedHTTPException
@@ -103,7 +103,7 @@ class HTTPProvider(BaseProvider):
         
         if content_type in ('text/javascript', 'application/json'):
             try:
-                json_response = simplejson.loads(raw_response)
+                json_response = json.loads(raw_response)
                 resource = OEmbedResource.create(json_response)
             except ValueError:
                 raise OEmbedException('Unable to parse response json')
