@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import signals
 from django.utils import simplejson as json
+from django.utils.timezone import now
 
 from oembed.constants import DEFAULT_OEMBED_TTL, MIN_OEMBED_TTL, RESOURCE_TYPES
 from oembed.exceptions import AlreadyRegistered, NotRegistered, OEmbedMissingEndpoint, OEmbedException
@@ -140,7 +141,7 @@ class ProviderSite(object):
                     match=url, 
                     maxwidth=kwargs.get('maxwidth', None), 
                     maxheight=kwargs.get('maxheight', None),
-                    date_expires__gte=datetime.datetime.now())[0]
+                    date_expires__gte=now())[0]
                 return OEmbedResource.create_json(stored_match.response_json)
             except IndexError:
                 # query the endpoint and cache response in db
@@ -157,7 +158,7 @@ class ProviderSite(object):
                 except:
                     cache_age = DEFAULT_OEMBED_TTL
                 
-                date_expires = datetime.datetime.now() + datetime.timedelta(seconds=cache_age)
+                date_expires = now() + datetime.timedelta(seconds=cache_age)
                 
                 stored_oembed, created = StoredOEmbed.objects.get_or_create(
                     match=url,
