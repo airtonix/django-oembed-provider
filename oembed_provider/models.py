@@ -6,7 +6,8 @@ from django.db import models
 import json
 
 from oembed.constants import RESOURCE_CHOICES
-from oembed.providers import HTTPProvider
+from oembed import providers
+from oembed import signals
 
 
 if VERSION < (1, 2):
@@ -18,7 +19,8 @@ else:
 class StoredOEmbed(models.Model):
     match = models.TextField()
     response_json = models.TextField()
-    resource_type = models.CharField(choices=RESOURCE_CHOICES, editable=False, max_length=8)
+    resource_type = models.CharField(
+        choices=RESOURCE_CHOICES, editable=False, max_length=8)
     date_added = models.DateTimeField(auto_now_add=True)
     date_expires = models.DateTimeField(blank=True, null=True)
     maxwidth = models.IntegerField(blank=True, null=True)
@@ -27,7 +29,7 @@ class StoredOEmbed(models.Model):
     # generic bits
     object_id = models.IntegerField(blank=True, null=True)
     content_type = models.ForeignKey(ContentType, blank=True, null=True,
-            related_name="related_%(class)s")
+                                     related_name="related_%(class)s")
     content_object = GenericForeignKey()
 
     class Meta:
@@ -39,17 +41,20 @@ class StoredOEmbed(models.Model):
 
     def __unicode__(self):
         return self.match
-    
+
     @property
     def response(self):
         return json.loads(self.response_json)
 
 
 class StoredProviderManager(models.Manager):
+
     def active(self):
         return self.filter(active=True)
 
-class StoredProvider(models.Model, HTTPProvider):
+
+class StoredProvider(models.Model, providers.HTTPProvider):
+
     """
     Essentially, a stored proxy provider that mimics the interface of a python
     HTTPProvider - used for autodiscovery
@@ -57,7 +62,7 @@ class StoredProvider(models.Model, HTTPProvider):
     endpoint_url = models.CharField(max_length=255)
     regex = models.CharField(max_length=255)
     wildcard_regex = models.CharField(max_length=255, blank=True,
-        help_text='Wild-card version of regex')
+                                      help_text='Wild-card version of regex')
     resource_type = models.CharField(choices=RESOURCE_CHOICES, max_length=8)
     active = models.BooleanField(default=False)
     provides = models.BooleanField(default=False, help_text='Provide upstream')
@@ -84,10 +89,11 @@ class StoredProvider(models.Model, HTTPProvider):
 
 
 class AggregateMediaDescriptor(property):
+
     def contribute_to_class(self, cls, name):
         self.name = name
         setattr(cls, self.name, self)
-        
+
     def __get__(self, instance, cls=None):
         if instance.content_object:
             return instance.content_object
@@ -100,7 +106,7 @@ class AggregateMediaDescriptor(property):
                 return instance.content_object
             else:
                 stored_oembed = StoredOEmbed.objects.filter(
-                        match=instance.url)[0]
+                    match=instance.url)[0]
                 return stored_oembed
         except:
             pass
@@ -113,19 +119,17 @@ class AggregateMedia(models.Model):
     url = models.TextField()
     object_id = models.IntegerField(blank=True, null=True)
     content_type = models.ForeignKey(ContentType, blank=True, null=True,
-            related_name="aggregate_media")
+                                     related_name="aggregate_media")
     content_object = GenericForeignKey()
-    
+
     media = AggregateMediaDescriptor()
-    
+
     def __unicode__(self):
         return self.url
-    
+
     def get_absolute_url(self):
         if self.content_object and hasattr(self.content_object, 'get_absolute_url'):
             return self.content_object.get_absolute_url()
         return self.url
 
 
-from oembed.listeners import start_listening
-start_listening()

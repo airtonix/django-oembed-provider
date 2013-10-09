@@ -25,7 +25,7 @@ import json
 
 from oembed.constants import OEMBED_ALLOWED_SIZES, OEMBED_THUMBNAIL_SIZE
 from oembed.exceptions import OEmbedException, OEmbedHTTPException
-from oembed.image_processors import image_processor
+from oembed.processors.image import ImageProcessor
 from oembed.resources import OEmbedResource
 from oembed.utils import (fetch_url, get_domain, mock_request, cleaned_sites,
                           size_to_nearest, relative_to_full, scale)
@@ -146,7 +146,7 @@ class DjangoProviderOptions(object):
 
     valid_sizes = OEMBED_ALLOWED_SIZES
     thumbnail_sizes = OEMBED_THUMBNAIL_SIZE
-    image_processor = image_processor()
+    image_processor = ImageProcessor()
     force_fit = False
 
     year_part = 'year'

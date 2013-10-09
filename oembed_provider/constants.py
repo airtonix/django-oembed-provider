@@ -12,7 +12,7 @@ OEMBED_HTML_PARSER = getattr(
 
 # the oembed image processor supports different backends!
 OEMBED_IMAGE_PROCESSOR = getattr(
-    settings, 'OEMBED_IMAGE_PROCESSOR', 'oembed.image_processors.pil.PIL_Resizer')
+    settings, 'OEMBED_IMAGE_PROCESSOR', 'oembed.processors.image.pil.PIL_Resizer')
 
 
 # oembed-ed objects can specify a TTL, after which they should be re-fetched
