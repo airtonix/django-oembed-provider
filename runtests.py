@@ -7,10 +7,13 @@ from django.conf import settings
 
 if not settings.configured:
     settings.configure(
-        DATABASES= {'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-        }},
-        ROOT_URLCONF='oembed.tests.urls',
+        DATABASES={
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': ':memory:'
+            }
+        },
+        ROOT_URLCONF='test_project.urls',
         SITE_ID=1,
         INSTALLED_APPS=[
             'django.contrib.auth',
@@ -18,8 +21,8 @@ if not settings.configured:
             'django.contrib.contenttypes',
             'django.contrib.sessions',
             'django.contrib.sites',
-            'oembed.tests',
-            'oembed',
+            'test_project',
+            'oembed_provider',
         ]
     )
 
@@ -28,7 +31,8 @@ from django.test.simple import DjangoTestSuiteRunner
 
 def runtests(*test_args):
     if not test_args:
-        test_args = ['oembed']
+        test_args = ['test_project']
+
     parent = dirname(abspath(__file__))
     sys.path.insert(0, parent)
     test_runner = DjangoTestSuiteRunner(verbosity=1, interactive=True)

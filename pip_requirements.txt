@@ -1,3 +1,0 @@
-PIL
-BeautifulSoup
-httplib2
